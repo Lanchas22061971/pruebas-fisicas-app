@@ -1,0 +1,2681 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pruebas Físicas - Ed. Física</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .nav-tab:hover {
+            background: #5a6fd8;
+            color: white;
+        }
+
+        .content-section {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin: 5px;
+            min-height: 50px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-large {
+            padding: 20px 30px;
+            font-size: 18px;
+            min-height: 60px;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            color: #212529;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        }
+
+        /* Vista de Prueba Activa */
+        .active-test-header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .active-test-header h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .test-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .student-list-active {
+            display: grid;
+            gap: 10px;
+        }
+
+        .student-row {
+            display: grid;
+            grid-template-columns: 2fr auto 120px 80px;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            align-items: center;
+            border-left: 4px solid #e1e5e9;
+            transition: all 0.3s ease;
+        }
+
+        .student-row.completed {
+            border-left-color: #28a745;
+            background: #d4edda;
+            animation: slideInCompleted 0.5s ease;
+        }
+
+        .student-row.current {
+            border-left-color: #ffc107;
+            background: #fff3cd;
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes slideInCompleted {
+            from {
+                transform: translateX(20px);
+                opacity: 0.5;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+            }
+            50% {
+                box-shadow: 0 8px 25px rgba(255, 193, 7, 0.5);
+            }
+        }
+
+        .student-name-active {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .result-input {
+            padding: 10px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+            transition: border-color 0.3s ease;
+        }
+
+        .result-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Mejoras para uso exterior */
+        .outdoor-optimized {
+            filter: brightness(1.2) contrast(1.3);
+        }
+
+        .outdoor-optimized .btn {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .outdoor-optimized .student-row {
+            border-width: 3px;
+        }
+
+        .btn-pulse {
+            animation: btnPulse 1s ease infinite;
+        }
+
+        @keyframes btnPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 6px 12px rgba(102, 126, 234, 0.5);
+            }
+        }
+
+        .result-input.error {
+            border-color: #dc3545;
+            background-color: #f8d7da;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Indicadores de rendimiento */
+        .performance-excellent { border-left-color: #28a745 !important; }
+        .performance-good { border-left-color: #20c997 !important; }
+        .performance-average { border-left-color: #ffc107 !important; }
+        .performance-below { border-left-color: #fd7e14 !important; }
+        .performance-poor { border-left-color: #dc3545 !important; }
+
+        /* Mejoras responsive adicionales */
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+            
+            .test-info {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .student-row {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .course-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .course-card {
+            background: #f8f9fa;
+            border: 2px solid #e1e5e9;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .course-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .course-card.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .test-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .test-card {
+            background: #f8f9fa;
+            border: 2px solid #e1e5e9;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .test-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .test-card.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .status-completed {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e1e5e9;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            transition: width 0.3s ease;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-info {
+            background: #cce7ff;
+            color: #004085;
+            border: 1px solid #b3d9ff;
+        }
+
+        /* Estilos para modales */
+        .modal-content {
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translate(-50%, -60%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+        }
+
+        /* Mejoras para importación masiva */
+        .import-section {
+            border-left: 4px solid #2196F3;
+        }
+
+        .import-help {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        /* Contador de nombres */
+        .name-counter {
+            background: #4caf50;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* Estilos para previsualización */
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .preview-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+            font-weight: 600;
+        }
+
+        .preview-table td {
+            padding: 10px 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+            position: relative;
+        }
+
+        .preview-table td.student-name {
+            text-align: left;
+            font-weight: 600;
+            background: #f8f9fa;
+        }
+
+        .preview-table td.course-header {
+            background: #495057;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Colores de rendimiento en celdas */
+        .cell-excellent { background: rgba(40, 167, 69, 0.1) !important; color: #155724; font-weight: 600; }
+        .cell-good { background: rgba(32, 201, 151, 0.1) !important; color: #0c5460; font-weight: 600; }
+        .cell-average { background: rgba(255, 193, 7, 0.1) !important; color: #856404; font-weight: 600; }
+        .cell-below { background: rgba(253, 126, 20, 0.1) !important; color: #8a4a00; font-weight: 600; }
+        .cell-poor { background: rgba(220, 53, 69, 0.1) !important; color: #721c24; font-weight: 600; }
+        .cell-missing { background: #f8f9fa !important; color: #6c757d; font-style: italic; }
+
+        /* Indicadores visuales */
+        .progress-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        .progress-excellent { background: #28a745; }
+        .progress-good { background: #20c997; }
+        .progress-average { background: #ffc107; }
+        .progress-below { background: #fd7e14; }
+        .progress-poor { background: #dc3545; }
+        .progress-missing { background: #6c757d; }
+
+        /* Resumen de clase */
+        .class-summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* Estilos de impresión */
+        @media print {
+            .nav-tabs, .btn, #previewStats, .alert {
+                display: none !important;
+            }
+            
+            .preview-table {
+                font-size: 0.8rem;
+            }
+            
+            .preview-table th, .preview-table td {
+                padding: 6px 4px;
+            }
+            
+            body {
+                background: white !important;
+            }
+            
+            .content-section {
+                background: white !important;
+                box-shadow: none !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .student-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                text-align: center;
+            }
+            
+            .test-selector {
+                grid-template-columns: 1fr;
+            }
+            
+            .course-selector {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏃 Pruebas Físicas - Patio</h1>
+            <p>Sistema optimizado para evaluaciones en tiempo real</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showSection('setup', this)">⚙️ Configurar</button>
+            <button class="nav-tab" onclick="showSection('active', this)">🏃 Prueba Activa</button>
+            <button class="nav-tab" onclick="showSection('preview', this)">👁️ Previsualizar</button>
+            <button class="nav-tab" onclick="showSection('results', this)">📊 Resultados</button>
+            <button class="nav-tab" onclick="showSection('manage', this)">👥 Gestionar</button>
+        </div>
+
+        <!-- Sección Configurar -->
+        <div id="setup" class="content-section active">
+            <h2>Configurar Sesión de Pruebas</h2>
+            
+            <h3>1. Seleccionar Curso</h3>
+            <div class="course-selector" id="courseSelector">
+                <div class="course-card" onclick="selectCourse('2A', this)">
+                    <h3>2° A</h3>
+                    <p id="count2A">0 alumnos</p>
+                </div>
+                <div class="course-card" onclick="selectCourse('2B', this)">
+                    <h3>2° B</h3>
+                    <p id="count2B">0 alumnos</p>
+                </div>
+                <div class="course-card" onclick="selectCourse('2C', this)">
+                    <h3>2° C</h3>
+                    <p id="count2C">0 alumnos</p>
+                </div>
+                <div class="course-card" onclick="selectCourse('4A', this)">
+                    <h3>4° A</h3>
+                    <p id="count4A">0 alumnos</p>
+                </div>
+                <div class="course-card" onclick="selectCourse('4B', this)">
+                    <h3>4° B</h3>
+                    <p id="count4B">0 alumnos</p>
+                </div>
+                <div class="course-card" onclick="selectCourse('4C', this)">
+                    <h3>4° C</h3>
+                    <p id="count4C">0 alumnos</p>
+                </div>
+            </div>
+
+            <h3>2. Seleccionar Prueba</h3>
+            <div class="test-selector" id="testSelector">
+                <div class="test-card" onclick="selectTest('abdominales', this)">
+                    <h4>Abdominales</h4>
+                    <p>30 segundos</p>
+                    <small>Repeticiones</small>
+                </div>
+                <div class="test-card" onclick="selectTest('velocidad', this)">
+                    <h4>Velocidad</h4>
+                    <p>50 metros</p>
+                    <small>Segundos</small>
+                </div>
+                <div class="test-card" onclick="selectTest('salto', this)">
+                    <h4>Salto Horizontal</h4>
+                    <p>Distancia</p>
+                    <small>Metros</small>
+                </div>
+                <div class="test-card" onclick="selectTest('balon', this)">
+                    <h4>Balón Medicinal</h4>
+                    <p id="balonWeight">2-4 kg</p>
+                    <small>Metros</small>
+                </div>
+                <div class="test-card" onclick="selectTest('flexibilidad', this)">
+                    <h4>Flexibilidad</h4>
+                    <p>Sit and reach</p>
+                    <small>Centímetros</small>
+                </div>
+                <div class="test-card" onclick="selectTest('resistencia', this)">
+                    <h4>Resistencia</h4>
+                    <p>Course Navette</p>
+                    <small>Nivel</small>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-large btn-success" onclick="startTest()" id="startTestBtn" disabled>
+                    🚀 Comenzar Prueba
+                </button>
+            </div>
+        </div>
+
+        <!-- Sección Prueba Activa -->
+        <div id="active" class="content-section">
+            <div class="active-test-header">
+                <h2 id="activeTestTitle">Prueba Activa</h2>
+                <p id="activeTestInfo">Selecciona configuración primero</p>
+            </div>
+
+            <div class="test-info">
+                <div class="info-card">
+                    <strong>Curso:</strong>
+                    <div id="activeCourse">-</div>
+                </div>
+                <div class="info-card">
+                    <strong>Alumnos:</strong>
+                    <div id="activeStudentCount">0</div>
+                </div>
+                <div class="info-card">
+                    <strong>Completados:</strong>
+                    <div id="activeCompleted">0</div>
+                </div>
+                <div class="info-card">
+                    <strong>Tiempo Estimado:</strong>
+                    <div id="estimatedTime">-</div>
+                </div>
+                <div class="info-card">
+                    <strong>Promedio Actual:</strong>
+                    <div id="currentAverage">-</div>
+                </div>
+                <div class="info-card" style="grid-column: span 2;">
+                    <strong>Progreso:</strong>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    <div style="font-size: 0.9rem; margin-top: 5px;" id="progressText">0% completado</div>
+                </div>
+            </div>
+
+            <div class="quick-actions">
+                <button class="btn btn-warning" onclick="markAsAbsent()">😷 Marcar Ausente</button>
+                <button class="btn btn-secondary" onclick="undoLast()">↶ Deshacer Último</button>
+                <button class="btn" onclick="showTimer()" id="timerBtn">⏱️ Cronómetro</button>
+                <button class="btn btn-success" onclick="finishTest()">✅ Finalizar Prueba</button>
+            </div>
+
+            <!-- Cronómetro integrado -->
+            <div id="timerSection" style="display: none; background: #f8f9fa; padding: 20px; border-radius: 15px; margin-bottom: 20px; text-align: center;">
+                <h3>⏱️ Cronómetro</h3>
+                <div id="timerDisplay" style="font-size: 3rem; font-weight: bold; color: #667eea; margin: 20px 0;">00:00.00</div>
+                <div>
+                    <button class="btn btn-success" onclick="startTimer()">▶️ Iniciar</button>
+                    <button class="btn btn-warning" onclick="pauseTimer()">⏸️ Pausar</button>
+                    <button class="btn btn-danger" onclick="resetTimer()">🔄 Reset</button>
+                    <button class="btn btn-secondary" onclick="hideTimer()">❌ Cerrar</button>
+                </div>
+                <div style="margin-top: 15px;">
+                    <button class="btn" onclick="recordTime()">📝 Usar Este Tiempo</button>
+                </div>
+            </div>
+
+            <div id="studentListActive" class="student-list-active"></div>
+        </div>
+
+        <!-- Sección Previsualizar -->
+        <div id="preview" class="content-section">
+            <h2>👁️ Previsualizar Listas con Marcas</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 15px; margin-bottom: 20px; align-items: end;">
+                <div class="form-group">
+                    <label>Seleccionar Clase para Previsualizar:</label>
+                    <select id="previewCourse" onchange="updatePreview()">
+                        <option value="all">📊 Todas las clases</option>
+                        <option value="2A">2° A</option>
+                        <option value="2B">2° B</option>
+                        <option value="2C">2° C</option>
+                        <option value="4A">4° A</option>
+                        <option value="4B">4° B</option>
+                        <option value="4C">4° C</option>
+                    </select>
+                </div>
+                <button class="btn btn-secondary" onclick="printPreview()">🖨️ Imprimir</button>
+                <button class="btn btn-secondary" onclick="exportPreviewCSV()">📄 Exportar CSV</button>
+            </div>
+
+            <!-- Resumen estadístico -->
+            <div id="previewStats" class="stats-grid" style="margin-bottom: 20px;"></div>
+
+            <!-- Sistema de calificaciones -->
+            <div style="background: #e8f5e8; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #28a745;">
+                <h4 style="margin-bottom: 10px;">📊 Sistema de Calificaciones:</h4>
+                
+                <div style="margin-bottom: 15px;">
+                    <strong>🏃 Por Pruebas Completadas:</strong>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; font-size: 0.9rem; margin-top: 5px;">
+                        <span style="background: #28a745; color: white; padding: 5px 8px; border-radius: 8px; text-align: center;"><strong>6 pruebas = 10</strong></span>
+                        <span style="background: #20c997; color: white; padding: 5px 8px; border-radius: 8px; text-align: center;"><strong>5 pruebas = 9</strong></span>
+                        <span style="background: #20c997; color: white; padding: 5px 8px; border-radius: 8px; text-align: center;"><strong>4 pruebas = 7</strong></span>
+                        <span style="background: #ffc107; color: #212529; padding: 5px 8px; border-radius: 8px; text-align: center;"><strong>3 pruebas = 5</strong></span>
+                        <span style="background: #fd7e14; color: white; padding: 5px 8px; border-radius: 8px; text-align: center;"><strong>2 pruebas = 4</strong></span>
+                        <span style="background: #fd7e14; color: white; padding: 5px 8px; border-radius: 8px; text-align: center;"><strong>1 prueba = 3</strong></span>
+                        <span style="background: #dc3545; color: white; padding: 5px 8px; border-radius: 8px; text-align: center;"><strong>0 pruebas = 1</strong></span>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <strong>🏃‍♂️ Resistencia (Course Navette) - 2° ESO:</strong>
+                        <div style="font-size: 0.85rem; margin-top: 5px; background: white; padding: 10px; border-radius: 5px;">
+                            <div>• <strong>10.0+ periodos = 10</strong> (Excelente)</div>
+                            <div>• <strong>9.5-9.9 periodos = 9</strong> (Excelente)</div>
+                            <div>• <strong>8.5-9.4 periodos = 8</strong> (Notable)</div>
+                            <div>• <strong>7.5-8.4 periodos = 7</strong> (Notable)</div>
+                            <div>• <strong>6.5-7.4 periodos = 6</strong> (Bien)</div>
+                            <div>• <strong>3.0-6.4 periodos = 5</strong> (Aprobado)</div>
+                            <div>• <strong>&lt;3.0 periodos = 1-4</strong> (Suspenso)</div>
+                        </div>
+                    </div>
+                    <div>
+                        <strong>🏃‍♂️ Resistencia (Course Navette) - 4° ESO:</strong>
+                        <div style="font-size: 0.85rem; margin-top: 5px; background: white; padding: 10px; border-radius: 5px;">
+                            <div>• <strong>12.0+ periodos = 10</strong> (Excelente)</div>
+                            <div>• <strong>11.5-11.9 periodos = 9</strong> (Excelente)</div>
+                            <div>• <strong>10.5-11.4 periodos = 8</strong> (Notable)</div>
+                            <div>• <strong>9.5-10.4 periodos = 7</strong> (Notable)</div>
+                            <div>• <strong>8.5-9.4 periodos = 6</strong> (Bien)</div>
+                            <div>• <strong>4.0-8.4 periodos = 5</strong> (Aprobado)</div>
+                            <div>• <strong>&lt;4.0 periodos = 1-4</strong> (Suspenso)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leyenda de colores -->
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                <h4 style="margin-bottom: 10px;">🎨 Leyenda de Rendimiento Individual:</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                    <span style="background: #28a745; color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.9rem;">🏆 Excelente</span>
+                    <span style="background: #20c997; color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.9rem;">👍 Bueno</span>
+                    <span style="background: #ffc107; color: #212529; padding: 5px 10px; border-radius: 15px; font-size: 0.9rem;">⚠️ Regular</span>
+                    <span style="background: #fd7e14; color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.9rem;">📉 Bajo</span>
+                    <span style="background: #dc3545; color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.9rem;">❌ Muy Bajo</span>
+                    <span style="background: #6c757d; color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.9rem;">➖ Sin Datos</span>
+                </div>
+            </div>
+
+            <!-- Vista de previsualización -->
+            <div id="previewContainer" style="background: white; border-radius: 10px; overflow: hidden;"></div>
+        </div>
+        <div id="results" class="content-section">
+            <h2>Resultados y Progreso</h2>
+            
+            <div class="form-group">
+                <label>Ver resultados por curso:</label>
+                <select id="resultsCourse" onchange="updateResults()">
+                    <option value="all">Todos los cursos</option>
+                    <option value="2A">2° A</option>
+                    <option value="2B">2° B</option>
+                    <option value="2C">2° C</option>
+                    <option value="4A">4° A</option>
+                    <option value="4B">4° B</option>
+                    <option value="4C">4° C</option>
+                </select>
+            </div>
+
+            <div id="resultsContainer"></div>
+        </div>
+
+        <!-- Sección Gestionar -->
+        <div id="manage" class="content-section">
+            <h2>Gestionar Alumnos</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                <!-- Agregar alumno individual -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 15px;">
+                    <h3>➕ Agregar Alumno Individual</h3>
+                    <div class="form-group">
+                        <input type="text" id="studentName" placeholder="Nombre completo">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <select id="studentCourse">
+                            <option value="2A">2° A</option>
+                            <option value="2B">2° B</option>
+                            <option value="2C">2° C</option>
+                            <option value="4A">4° A</option>
+                            <option value="4B">4° B</option>
+                            <option value="4C">4° C</option>
+                        </select>
+                        <input type="date" id="studentBirth">
+                    </div>
+                    <button class="btn" onclick="addStudent()" style="margin-top: 10px; width: 100%;">Agregar</button>
+                </div>
+
+                <!-- Importar lista masiva -->
+                <div style="background: #e3f2fd; padding: 20px; border-radius: 15px;">
+                    <h3>📋 Importar Lista de Clase</h3>
+                    <div class="form-group">
+                        <label>Seleccionar Curso:</label>
+                        <select id="bulkCourse">
+                            <option value="2A">2° A</option>
+                            <option value="2B">2° B</option>
+                            <option value="2C">2° C</option>
+                            <option value="4A">4° A</option>
+                            <option value="4B">4° B</option>
+                            <option value="4C">4° C</option>
+                        </select>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <button class="btn btn-secondary" onclick="showBulkTextImport()">📝 Pegar Lista</button>
+                        <button class="btn btn-secondary" onclick="importCSVStudents()">📄 Subir CSV</button>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <button class="btn" onclick="downloadCSVTemplate()" style="width: 100%; font-size: 0.9rem;">⬇️ Descargar Plantilla CSV</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <button class="btn btn-secondary" onclick="exportData()">💾 Exportar Datos</button>
+                <button class="btn btn-secondary" onclick="importData()">📂 Importar Datos</button>
+                <button class="btn btn-secondary" onclick="toggleOutdoorMode()">☀️ Modo Exterior</button>
+                <button class="btn btn-secondary" onclick="autoBackup()">🔄 Probar Backup</button>
+                <button class="btn btn-warning" onclick="clearAllData()">🗑️ Limpiar Todo</button>
+                
+                <div style="background: #e3f2fd; padding: 10px; border-radius: 8px; margin-top: 15px; font-size: 0.9rem;">
+                    💡 <strong>Consejo:</strong> Usa "💾 Exportar Datos" al final de cada sesión para guardar tu trabajo de forma permanente.
+                </div>
+            </div>
+
+            <div id="studentsList"></div>
+        </div>
+
+        <!-- Modal para importar texto masivo -->
+        <div id="bulkImportModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 600px;">
+                <h3>📝 Importar Lista de Alumnos</h3>
+                <p style="color: #666; margin-bottom: 15px;">Pega la lista de nombres, uno por línea. Puedes copiar desde Excel, Word, o cualquier lista:</p>
+                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; margin-bottom: 15px; font-size: 0.9rem;">
+                    <strong>Ejemplos válidos:</strong><br>
+                    Ana García López<br>
+                    Carlos Martín Ruiz<br>
+                    María Rodríguez Silva<br><br>
+                    <strong>O desde Excel:</strong><br>
+                    García López, Ana<br>
+                    Martín Ruiz, Carlos<br><br>
+                    <em>¡También detecta automáticamente fechas de nacimiento!</em>
+                </div>
+                <div class="form-group">
+                    <label>Curso seleccionado: <strong id="selectedCourseDisplay">2° A</strong></label>
+                </div>
+                <div class="form-group">
+                    <label>Lista de nombres:</label>
+                    <textarea id="bulkStudentNames" placeholder="Pega aquí los nombres, uno por línea..." 
+                              style="width: 100%; height: 200px; padding: 10px; border: 2px solid #e1e5e9; border-radius: 8px;"></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button class="btn btn-secondary" onclick="closeBulkImport()">Cancelar</button>
+                    <button class="btn btn-success" onclick="processBulkImport()">Importar <span id="nameCount">0</span> Alumnos</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos en memoria
+        let students = [];
+        let tests = {};
+        
+        // Estado de la prueba activa
+        let activeSession = {
+            course: null,
+            test: null,
+            currentStudentIndex: 0,
+            studentsInSession: [],
+            isActive: false,
+            startTime: null,
+            results: []
+        };
+
+        // Estado del cronómetro
+        let timerState = {
+            startTime: null,
+            elapsed: 0,
+            isRunning: false,
+            interval: null
+        };
+
+        const testTypes = {
+            'abdominales': { name: 'Abdominales 30s', unit: 'rep', step: '1', hasTimer: true },
+            'velocidad': { name: 'Velocidad 50m', unit: 'seg', step: '0.01', hasTimer: true },
+            'salto': { name: 'Salto Horizontal', unit: 'm', step: '0.01', hasTimer: false },
+            'balon': { name: 'Balón Medicinal', unit: 'm', step: '0.01', hasTimer: false },
+            'flexibilidad': { name: 'Flexibilidad', unit: 'cm', step: '0.1', hasTimer: false },
+            'resistencia': { name: 'Resistencia', unit: 'nivel', step: '0.5', hasTimer: false }
+        };
+
+        // Datos de ejemplo para empezar rápido
+        function loadSampleData() {
+            if (students.length === 0) {
+                const sampleStudents = [
+                    { id: 1, name: 'Ana García López', course: '2A', birth: '2009-03-15' },
+                    { id: 2, name: 'Carlos López Martín', course: '2A', birth: '2009-07-22' },
+                    { id: 3, name: 'María Rodríguez Silva', course: '2A', birth: '2009-01-10' },
+                    { id: 4, name: 'David Martín Torres', course: '2B', birth: '2009-05-30' },
+                    { id: 5, name: 'Laura Sánchez Moreno', course: '2B', birth: '2009-09-18' },
+                    { id: 6, name: 'Javier Ruiz Fernández', course: '2C', birth: '2009-12-03' },
+                    { id: 7, name: 'Paula Fernández Díaz', course: '4A', birth: '2007-04-12' },
+                    { id: 8, name: 'Miguel Torres Jiménez', course: '4A', birth: '2007-08-25' },
+                    { id: 9, name: 'Carmen Silva Vega', course: '4B', birth: '2007-11-07' },
+                    { id: 10, name: 'Alberto Vega Romero', course: '4C', birth: '2007-02-19' }
+                ];
+                
+                students = sampleStudents;
+                
+                // Añadir algunos resultados de ejemplo para la previsualización
+                tests = {
+                    1: { // Ana García - 2A
+                        'abdominales': { value: 32, date: '2025-01-15' },
+                        'velocidad': { value: 8.5, date: '2025-01-16' },
+                        'salto': { value: 1.75, date: '2025-01-17' },
+                        'resistencia': { value: 6.5, date: '2025-01-20' } // Nota 6 en 2°ESO
+                    },
+                    2: { // Carlos López - 2A
+                        'abdominales': { value: 28, date: '2025-01-15' },
+                        'velocidad': { value: 7.8, date: '2025-01-16' },
+                        'salto': { value: 1.85, date: '2025-01-17' },
+                        'balon': { value: 5.2, date: '2025-01-18' },
+                        'resistencia': { value: 9.5, date: '2025-01-20' } // Nota 9 en 2°ESO (excelente)
+                    },
+                    3: { // María Rodríguez - 2A
+                        'abdominales': { value: 35, date: '2025-01-15' },
+                        'flexibilidad': { value: 12, date: '2025-01-19' },
+                        'resistencia': { value: 3.0, date: '2025-01-20' } // Nota 5 en 2°ESO (aprobado justo)
+                    },
+                    4: { // David Martín - 2B
+                        'resistencia': { value: 2.5, date: '2025-01-20' } // Nota 4 en 2°ESO (suspenso)
+                    },
+                    7: { // Paula Fernández - 4A
+                        'abdominales': { value: 42, date: '2025-01-15' },
+                        'velocidad': { value: 7.2, date: '2025-01-16' },
+                        'salto': { value: 2.1, date: '2025-01-17' },
+                        'balon': { value: 7.5, date: '2025-01-18' },
+                        'flexibilidad': { value: 15, date: '2025-01-19' },
+                        'resistencia': { value: 11.5, date: '2025-01-20' } // Nota 9 en 4°ESO (excelente)
+                    },
+                    8: { // Miguel Torres - 4A
+                        'abdominales': { value: 38, date: '2025-01-15' },
+                        'velocidad': { value: 7.5, date: '2025-01-16' },
+                        'salto': { value: 2.0, date: '2025-01-17' },
+                        'resistencia': { value: 8.0, date: '2025-01-20' } // Nota 6 en 4°ESO
+                    },
+                    9: { // Carmen Silva - 4B
+                        'resistencia': { value: 3.5, date: '2025-01-20' } // Nota 4 en 4°ESO (suspenso)
+                    }
+                };
+                
+                updateAll();
+            }
+        }
+
+        // Inicialización
+        function init() {
+            loadSampleData();
+            loadAutoBackup();
+            restorePreferences();
+            
+            // Mostrar indicador sutil de backup
+            setTimeout(() => {
+                updateAll();
+                showBackupStatus();
+            }, 100);
+        }
+
+        // Mostrar estado de backup de forma sutil
+        function showBackupStatus() {
+            const container = document.querySelector('.container');
+            if (container && !isStorageAvailable()) {
+                const statusDiv = document.createElement('div');
+                statusDiv.style.cssText = `
+                    position: fixed; 
+                    top: 10px; 
+                    right: 10px; 
+                    background: rgba(255,193,7,0.9); 
+                    color: #212529; 
+                    padding: 8px 12px; 
+                    border-radius: 20px; 
+                    font-size: 0.8rem; 
+                    z-index: 1000;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                `;
+                statusDiv.innerHTML = '💾 Modo local - Exporta para guardar';
+                statusDiv.title = 'Los datos no se guardan automáticamente. Usa "Exportar Datos" para crear backups.';
+                document.body.appendChild(statusDiv);
+                
+                // Ocultar después de 5 segundos
+                setTimeout(() => {
+                    if (statusDiv.parentNode) {
+                        statusDiv.remove();
+                    }
+                }, 5000);
+            }
+        }
+
+        function updateAll() {
+            updateCourseInfo();
+            updateStudentsList();
+            updateResults();
+            
+            // Actualizar previsualización si está visible
+            const previewSection = document.getElementById('preview');
+            if (previewSection && previewSection.classList.contains('active')) {
+                updatePreview();
+            }
+        }
+
+        function downloadCSVTemplate() {
+            const csvContent = `Nombre,Apellidos,Fecha_Nacimiento
+Ana,García López,2009-03-15
+Carlos,Martín Ruiz,2009-07-22
+María,Rodríguez Silva,2009-01-10
+David,Fernández Torres,2009-05-30
+Laura,Sánchez Moreno,2009-09-18`;
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'plantilla_alumnos.csv';
+            a.click();
+            
+            URL.revokeObjectURL(url);
+            
+            alert('Plantilla CSV descargada!\n\n📝 Instrucciones:\n1. Abre el archivo con Excel o similar\n2. Rellena con tus alumnos\n3. Guarda como CSV\n4. Súbelo usando "Subir CSV"');
+            playSound('success');
+        }
+
+        function clearAllData() {
+            if (confirm('⚠️ ¿Estás seguro de que quieres borrar TODOS los datos?\n\nEsto eliminará:\n- Todos los alumnos\n- Todas las pruebas\n- Todo el progreso\n\nEsta acción NO se puede deshacer.')) {
+                if (confirm('Confirmación final: ¿Realmente quieres borrar todo?')) {
+                    students = [];
+                    tests = {};
+                    activeSession = {
+                        course: null,
+                        test: null,
+                        currentStudentIndex: 0,
+                        studentsInSession: [],
+                        isActive: false,
+                        startTime: null,
+                        results: []
+                    };
+                    
+                    // Limpiar localStorage
+                    safeRemoveItem('educacion_fisica_backup');
+                    safeRemoveItem('outdoorMode');
+                    
+                    updateAll();
+                    alert('Todos los datos han sido eliminados');
+                }
+            }
+        }
+
+        // Navegación
+        function showSection(sectionId, clickedElement = null) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Activar el tab correcto
+            if (clickedElement) {
+                clickedElement.classList.add('active');
+            } else {
+                // Fallback: encontrar el tab por el onclick
+                const tabs = document.querySelectorAll('.nav-tab');
+                tabs.forEach(tab => {
+                    const onclick = tab.getAttribute('onclick');
+                    if (onclick && onclick.includes(sectionId)) {
+                        tab.classList.add('active');
+                    }
+                });
+            }
+            
+            // Actualizar contenido específico de cada sección
+            setTimeout(() => {
+                if (sectionId === 'analytics') {
+                    updateAnalytics();
+                } else if (sectionId === 'pending') {
+                    updatePendingList();
+                } else if (sectionId === 'preview') {
+                    updatePreview();
+                }
+            }, 100);
+        }
+
+        // Configuración de prueba
+        function updateCourseInfo() {
+            const courses = ['2A', '2B', '2C', '4A', '4B', '4C'];
+            
+            courses.forEach(course => {
+                const element = document.getElementById(`count${course}`);
+                if (element) {
+                    const count = students.filter(s => s.course === course).length;
+                    element.textContent = `${count} alumnos`;
+                }
+            });
+        }
+
+        function selectCourse(course, element = null) {
+            document.querySelectorAll('.course-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Seleccionar la tarjeta correcta
+            if (element) {
+                element.classList.add('selected');
+            } else {
+                // Fallback: buscar por el curso
+                const cards = document.querySelectorAll('.course-card');
+                cards.forEach(card => {
+                    if (card.querySelector('h3').textContent.includes(course.replace('A', ' A').replace('B', ' B').replace('C', ' C'))) {
+                        card.classList.add('selected');
+                    }
+                });
+            }
+            
+            activeSession.course = course;
+            updateBalonWeight();
+            checkCanStart();
+        }
+
+        function selectTest(test, element = null) {
+            document.querySelectorAll('.test-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Seleccionar la tarjeta correcta
+            if (element) {
+                element.classList.add('selected');
+            } else {
+                // Fallback: buscar por el test
+                const cards = document.querySelectorAll('.test-card');
+                cards.forEach(card => {
+                    if (card.getAttribute('onclick') && card.getAttribute('onclick').includes(test)) {
+                        card.classList.add('selected');
+                    }
+                });
+            }
+            
+            activeSession.test = test;
+            checkCanStart();
+        }
+
+        function updateBalonWeight() {
+            if (activeSession.course) {
+                const weight = activeSession.course.startsWith('2') ? '2 kg' : '4 kg';
+                document.getElementById('balonWeight').textContent = weight;
+            }
+        }
+
+        function checkCanStart() {
+            const canStart = activeSession.course && activeSession.test;
+            document.getElementById('startTestBtn').disabled = !canStart;
+        }
+
+        function startTest() {
+            if (!activeSession.course || !activeSession.test) return;
+            
+            // Preparar lista de estudiantes para la sesión
+            activeSession.studentsInSession = students
+                .filter(s => s.course === activeSession.course)
+                .map(student => ({
+                    ...student,
+                    result: null,
+                    completed: false,
+                    absent: false
+                }));
+            
+            activeSession.currentStudentIndex = 0;
+            activeSession.isActive = true;
+            activeSession.startTime = Date.now();
+            activeSession.results = [];
+            
+            // Cambiar a la vista de prueba activa
+            showSection('active');
+            
+            // Mostrar cronómetro si la prueba lo requiere
+            const test = testTypes[activeSession.test];
+            const timerBtn = document.getElementById('timerBtn');
+            if (test.hasTimer && timerBtn) {
+                timerBtn.classList.add('btn-pulse');
+            }
+            
+            updateActiveTestDisplay();
+            
+            // Sonido de inicio
+            playSound('start');
+        }
+
+        function updateActiveTestDisplay() {
+            const test = testTypes[activeSession.test];
+            const course = activeSession.course;
+            
+            const titleElement = document.getElementById('activeTestTitle');
+            const infoElement = document.getElementById('activeTestInfo');
+            const courseElement = document.getElementById('activeCourse');
+            const countElement = document.getElementById('activeStudentCount');
+            
+            if (titleElement) {
+                titleElement.textContent = test.name;
+            }
+            if (infoElement) {
+                infoElement.textContent = `${course} • ${test.unit} • ${activeSession.studentsInSession.length} alumnos`;
+            }
+            if (courseElement) {
+                courseElement.textContent = course;
+            }
+            if (countElement) {
+                countElement.textContent = activeSession.studentsInSession.length;
+            }
+            
+            updateActiveProgress();
+            updateStudentListActive();
+        }
+
+        function updateActiveProgress() {
+            const completed = activeSession.studentsInSession.filter(s => s.completed || s.absent).length;
+            const total = activeSession.studentsInSession.length;
+            const percentage = total > 0 ? (completed / total) * 100 : 0;
+            
+            const completedElement = document.getElementById('activeCompleted');
+            const progressElement = document.getElementById('progressFill');
+            const progressTextElement = document.getElementById('progressText');
+            const estimatedTimeElement = document.getElementById('estimatedTime');
+            const currentAverageElement = document.getElementById('currentAverage');
+            
+            if (completedElement) {
+                completedElement.textContent = `${completed}/${total}`;
+            }
+            if (progressElement) {
+                progressElement.style.width = `${percentage}%`;
+            }
+            if (progressTextElement) {
+                progressTextElement.textContent = `${Math.round(percentage)}% completado`;
+            }
+            
+            // Calcular tiempo estimado
+            if (estimatedTimeElement && activeSession.startTime) {
+                const elapsedMinutes = (Date.now() - activeSession.startTime) / 60000;
+                const avgTimePerStudent = completed > 0 ? elapsedMinutes / completed : 2;
+                const remainingStudents = total - completed;
+                const estimatedRemaining = Math.round(avgTimePerStudent * remainingStudents);
+                estimatedTimeElement.textContent = `${estimatedRemaining} min`;
+            }
+            
+            // Calcular promedio actual
+            if (currentAverageElement && activeSession.results.length > 0) {
+                const validResults = activeSession.results.filter(r => r !== null && !isNaN(r));
+                if (validResults.length > 0) {
+                    const average = validResults.reduce((a, b) => a + b, 0) / validResults.length;
+                    const unit = testTypes[activeSession.test].unit;
+                    currentAverageElement.textContent = `${average.toFixed(2)} ${unit}`;
+                } else {
+                    currentAverageElement.textContent = '-';
+                }
+            }
+        }
+
+        // Funciones del cronómetro
+        function showTimer() {
+            const timerSection = document.getElementById('timerSection');
+            const timerBtn = document.getElementById('timerBtn');
+            
+            if (timerSection) {
+                timerSection.style.display = 'block';
+                timerBtn.textContent = '🔄 Actualizar Timer';
+            }
+        }
+
+        function hideTimer() {
+            const timerSection = document.getElementById('timerSection');
+            const timerBtn = document.getElementById('timerBtn');
+            
+            if (timerSection) {
+                timerSection.style.display = 'none';
+                timerBtn.textContent = '⏱️ Cronómetro';
+            }
+            resetTimer();
+        }
+
+        function startTimer() {
+            if (!timerState.isRunning) {
+                timerState.startTime = Date.now() - timerState.elapsed;
+                timerState.isRunning = true;
+                timerState.interval = setInterval(updateTimerDisplay, 10);
+                playSound('start');
+            }
+        }
+
+        function pauseTimer() {
+            if (timerState.isRunning) {
+                timerState.isRunning = false;
+                clearInterval(timerState.interval);
+                playSound('pause');
+            }
+        }
+
+        function resetTimer() {
+            timerState.isRunning = false;
+            timerState.elapsed = 0;
+            timerState.startTime = null;
+            clearInterval(timerState.interval);
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            if (timerState.isRunning) {
+                timerState.elapsed = Date.now() - timerState.startTime;
+            }
+            
+            const totalSeconds = timerState.elapsed / 1000;
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = Math.floor(totalSeconds % 60);
+            const centiseconds = Math.floor((timerState.elapsed % 1000) / 10);
+            
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${centiseconds.toString().padStart(2, '0')}`;
+            
+            const displayElement = document.getElementById('timerDisplay');
+            if (displayElement) {
+                displayElement.textContent = display;
+            }
+        }
+
+        function recordTime() {
+            if (timerState.elapsed > 0) {
+                const timeInSeconds = (timerState.elapsed / 1000).toFixed(2);
+                const resultInput = document.getElementById('currentResult');
+                if (resultInput) {
+                    resultInput.value = timeInSeconds;
+                    resultInput.focus();
+                    playSound('success');
+                }
+            }
+        }
+
+        // Sistema de sonidos
+        function playSound(type) {
+            // Usando AudioContext para generar sonidos simples
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                switch(type) {
+                    case 'success':
+                        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                        oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.1);
+                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                        break;
+                    case 'start':
+                        oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+                        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                        break;
+                    case 'pause':
+                        oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+                        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                        break;
+                }
+                
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.2);
+            } catch (e) {
+                // Silencioso si no hay soporte de audio
+            }
+        }
+
+        // Mejora en guardar resultados
+        function saveCurrentResult() {
+            const resultInput = document.getElementById('currentResult');
+            const result = parseFloat(resultInput.value);
+            
+            if (isNaN(result) || result <= 0) {
+                alert('Por favor, ingresa un resultado válido');
+                resultInput.classList.add('error');
+                setTimeout(() => resultInput.classList.remove('error'), 1000);
+                return;
+            }
+            
+            const currentStudent = activeSession.studentsInSession[activeSession.currentStudentIndex];
+            currentStudent.result = result;
+            currentStudent.completed = true;
+            
+            // Guardar resultado para estadísticas
+            activeSession.results.push(result);
+            
+            // Guardar en la base de datos
+            if (!tests[currentStudent.id]) tests[currentStudent.id] = {};
+            tests[currentStudent.id][activeSession.test] = {
+                value: result,
+                date: new Date().toISOString().split('T')[0]
+            };
+            
+            // Sonido de éxito
+            playSound('success');
+            
+            // Avanzar al siguiente estudiante
+            activeSession.currentStudentIndex++;
+            
+            updateActiveTestDisplay();
+            
+            // Verificar si terminamos
+            if (activeSession.currentStudentIndex >= activeSession.studentsInSession.length) {
+                setTimeout(() => {
+                    alert('¡Prueba completada! Todos los alumnos han terminado.');
+                    finishTest();
+                }, 500);
+            }
+        }
+
+        function updateStudentListActive() {
+            const container = document.getElementById('studentListActive');
+            
+            container.innerHTML = activeSession.studentsInSession.map((student, index) => {
+                let rowClass = 'student-row';
+                let statusHtml = '';
+                let actionHtml = '';
+                
+                if (student.completed || student.absent) {
+                    rowClass += ' completed';
+                    if (student.absent) {
+                        statusHtml = '<span class="status-pending">Ausente</span>';
+                    } else {
+                        statusHtml = `<span class="status-completed">${student.result} ${testTypes[activeSession.test].unit}</span>`;
+                    }
+                    actionHtml = '<button class="btn btn-warning" onclick="editResult(' + index + ')">Editar</button>';
+                } else if (index === activeSession.currentStudentIndex) {
+                    rowClass += ' current';
+                    statusHtml = '<span style="color: #ffc107; font-weight: 600;">⏳ Realizando prueba</span>';
+                    actionHtml = `
+                        <input type="number" class="result-input" id="currentResult" 
+                               placeholder="${testTypes[activeSession.test].unit}" 
+                               step="${testTypes[activeSession.test].step}"
+                               onkeypress="if(event.key==='Enter') saveCurrentResult()">
+                        <button class="btn btn-success" onclick="saveCurrentResult()">✓</button>
+                    `;
+                } else {
+                    statusHtml = '<span class="status-pending">Esperando</span>';
+                }
+                
+                return `
+                    <div class="${rowClass}">
+                        <div class="student-name-active">${student.name}</div>
+                        <div>${statusHtml}</div>
+                        <div>${actionHtml}</div>
+                        <div>${index + 1}/${activeSession.studentsInSession.length}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Enfocar el input del estudiante actual
+            setTimeout(() => {
+                const input = document.getElementById('currentResult');
+                if (input) input.focus();
+            }, 100);
+        }
+
+        function saveCurrentResult() {
+            const resultInput = document.getElementById('currentResult');
+            const result = parseFloat(resultInput.value);
+            
+            if (isNaN(result) || result <= 0) {
+                alert('Por favor, ingresa un resultado válido');
+                return;
+            }
+            
+            const currentStudent = activeSession.studentsInSession[activeSession.currentStudentIndex];
+            currentStudent.result = result;
+            currentStudent.completed = true;
+            
+            // Guardar en la base de datos
+            if (!tests[currentStudent.id]) tests[currentStudent.id] = {};
+            tests[currentStudent.id][activeSession.test] = {
+                value: result,
+                date: new Date().toISOString().split('T')[0]
+            };
+            
+            // Avanzar al siguiente estudiante
+            activeSession.currentStudentIndex++;
+            
+            updateActiveTestDisplay();
+            
+            // Verificar si terminamos
+            if (activeSession.currentStudentIndex >= activeSession.studentsInSession.length) {
+                setTimeout(() => {
+                    alert('¡Prueba completada! Todos los alumnos han terminado.');
+                    finishTest();
+                }, 500);
+            }
+        }
+
+        function markAsAbsent() {
+            if (activeSession.currentStudentIndex >= activeSession.studentsInSession.length) return;
+            
+            const currentStudent = activeSession.studentsInSession[activeSession.currentStudentIndex];
+            currentStudent.absent = true;
+            currentStudent.completed = true;
+            
+            activeSession.currentStudentIndex++;
+            updateActiveTestDisplay();
+            
+            if (activeSession.currentStudentIndex >= activeSession.studentsInSession.length) {
+                setTimeout(() => {
+                    alert('¡Prueba completada!');
+                    finishTest();
+                }, 500);
+            }
+        }
+
+        function undoLast() {
+            if (activeSession.currentStudentIndex > 0) {
+                activeSession.currentStudentIndex--;
+                const student = activeSession.studentsInSession[activeSession.currentStudentIndex];
+                student.completed = false;
+                student.absent = false;
+                student.result = null;
+                
+                // Eliminar de la base de datos
+                if (tests[student.id] && tests[student.id][activeSession.test]) {
+                    delete tests[student.id][activeSession.test];
+                }
+                
+                updateActiveTestDisplay();
+            }
+        }
+
+        function editResult(index) {
+            const newResult = prompt('Nuevo resultado:');
+            if (newResult && !isNaN(parseFloat(newResult))) {
+                const student = activeSession.studentsInSession[index];
+                student.result = parseFloat(newResult);
+                student.absent = false;
+                
+                // Actualizar en la base de datos
+                if (!tests[student.id]) tests[student.id] = {};
+                tests[student.id][activeSession.test] = {
+                    value: parseFloat(newResult),
+                    date: new Date().toISOString().split('T')[0]
+                };
+                
+                updateActiveTestDisplay();
+            }
+        }
+
+        // Análisis y estadísticas (función placeholder si no existe)
+        function updateAnalytics() {
+            // Esta función puede implementarse más tarde si es necesaria
+            console.log('Función updateAnalytics llamada');
+        }
+
+        function updatePendingList() {
+            // Esta función puede implementarse más tarde si es necesaria
+            console.log('Función updatePendingList llamada');
+        }
+
+        function finishTest() {
+            activeSession.isActive = false;
+            showSection('results');
+            updateResults();
+        }
+
+        // Gestión de alumnos
+        function addStudent() {
+            const name = document.getElementById('studentName').value;
+            const course = document.getElementById('studentCourse').value;
+            const birth = document.getElementById('studentBirth').value;
+            
+            if (!name.trim()) {
+                alert('Por favor, ingresa el nombre del alumno');
+                return;
+            }
+            
+            const student = {
+                id: Date.now(),
+                name: name.trim(),
+                course: course,
+                birth: birth
+            };
+            
+            students.push(student);
+            tests[student.id] = {};
+            
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentBirth').value = '';
+            
+            updateAll();
+            alert('Alumno agregado correctamente');
+        }
+
+        function removeStudent(studentId) {
+            if (confirm('¿Estás seguro de eliminar este alumno?')) {
+                students = students.filter(s => s.id !== studentId);
+                delete tests[studentId];
+                updateAll();
+            }
+        }
+
+        function updateStudentsList() {
+            const container = document.getElementById('studentsList');
+            
+            if (students.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">No hay alumnos registrados</div>';
+                return;
+            }
+            
+            const courses = ['2A', '2B', '2C', '4A', '4B', '4C'];
+            let html = '';
+            
+            courses.forEach(course => {
+                const studentsInCourse = students.filter(s => s.course === course);
+                
+                if (studentsInCourse.length > 0) {
+                    html += `<h3>${course} (${studentsInCourse.length} alumnos)</h3>`;
+                    html += '<div style="display: grid; gap: 10px; margin-bottom: 30px;">';
+                    studentsInCourse.forEach(student => {
+                        const studentTests = tests[student.id] || {};
+                        const completedTests = Object.keys(studentTests).filter(test => studentTests[test]?.value !== undefined).length;
+                        const grade = calculateGrade(completedTests);
+                        const gradeColor = getGradeColor(grade);
+                        const gradeText = getGradeText(grade);
+                        
+                        // Nota de resistencia específica si la tiene
+                        let resistanceInfo = '';
+                        if (studentTests.resistencia && studentTests.resistencia.value !== undefined) {
+                            const resistanceGrade = calculateResistanceGrade(studentTests.resistencia.value, student.course);
+                            const resColor = getGradeColor(resistanceGrade);
+                            resistanceInfo = ` • <span style="color: ${resColor}; font-weight: bold;">Resistencia: ${resistanceGrade}</span>`;
+                        }
+                        
+                        html += `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid ${gradeColor};">
+                                <div>
+                                    <div style="font-weight: 600; margin-bottom: 5px;">${student.name}</div>
+                                    <div style="font-size: 0.9rem; color: #666;">
+                                        ${completedTests}/6 pruebas • 
+                                        <strong style="color: ${gradeColor};">Nota: ${grade} (${gradeText})</strong>${resistanceInfo}
+                                    </div>
+                                </div>
+                                <button class="btn btn-danger" onclick="removeStudent(${student.id})">Eliminar</button>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                }
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Resultados
+        function updateResults() {
+            const courseSelect = document.getElementById('resultsCourse');
+            const container = document.getElementById('resultsContainer');
+            
+            if (!courseSelect || !container) return;
+            
+            const course = courseSelect.value;
+            const filteredStudents = course === 'all' ? students : students.filter(s => s.course === course);
+            
+            if (filteredStudents.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">No hay datos para mostrar</div>';
+                return;
+            }
+            
+            let html = '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse;">';
+            html += '<thead><tr style="background: #667eea; color: white;">';
+            html += '<th style="padding: 10px; border: 1px solid #ddd;">Alumno</th>';
+            Object.values(testTypes).forEach(test => {
+                html += `<th style="padding: 10px; border: 1px solid #ddd;">${test.name}</th>`;
+            });
+            html += '<th style="padding: 10px; border: 1px solid #ddd;">Progreso</th>';
+            html += '<th style="padding: 10px; border: 1px solid #ddd;">Nota Final</th>';
+            html += '</tr></thead><tbody>';
+            
+            filteredStudents.forEach(student => {
+                const studentTests = tests[student.id] || {};
+                let completedCount = 0;
+                
+                html += `<tr><td style="padding: 10px; border: 1px solid #ddd; font-weight: 600;">${student.name}</td>`;
+                
+                Object.keys(testTypes).forEach(testKey => {
+                    const test = studentTests[testKey];
+                    if (test && test.value !== undefined) {
+                        completedCount++;
+                        const value = `${test.value} ${testTypes[testKey].unit}`;
+                        const performance = calculatePerformanceLevel(testKey, test.value, student.course);
+                        const bgColor = performance === 'excellent' ? '#d4edda' : 
+                                       performance === 'good' ? '#d1ecf1' : 
+                                       performance === 'average' ? '#fff3cd' : 
+                                       performance === 'below' ? '#ffeaa7' : '#f8d7da';
+                        
+                        // Para resistencia, añadir la nota específica
+                        if (testKey === 'resistencia') {
+                            const resistanceGrade = calculateResistanceGrade(test.value, student.course);
+                            const gradeColor = getGradeColor(resistanceGrade);
+                            html += `<td style="padding: 10px; border: 1px solid #ddd; background: ${bgColor}; text-align: center;">
+                                ${value}<br><small style="color: ${gradeColor}; font-weight: bold;">Nota: ${resistanceGrade}</small>
+                            </td>`;
+                        } else {
+                            html += `<td style="padding: 10px; border: 1px solid #ddd; background: ${bgColor}; text-align: center;">${value}</td>`;
+                        }
+                    } else {
+                        html += `<td style="padding: 10px; border: 1px solid #ddd; background: #f8d7da; text-align: center;">-</td>`;
+                    }
+                });
+                
+                // Progreso
+                const totalTests = Object.keys(testTypes).length;
+                const progressPercentage = Math.round((completedCount / totalTests) * 100);
+                html += `<td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${completedCount}/${totalTests} (${progressPercentage}%)</td>`;
+                
+                // Nota final con resistencia si la tiene
+                const grade = calculateGrade(completedCount);
+                const gradeColor = getGradeColor(grade);
+                const gradeText = getGradeText(grade);
+                
+                let resistanceNote = '';
+                if (studentTests.resistencia && studentTests.resistencia.value !== undefined) {
+                    const resistanceGrade = calculateResistanceGrade(studentTests.resistencia.value, student.course);
+                    const resColor = getGradeColor(resistanceGrade);
+                    resistanceNote = `<br><small style="color: ${resColor};">Resist: ${resistanceGrade}</small>`;
+                }
+                
+                html += `<td style="padding: 10px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: ${gradeColor};">
+                    ${grade}<br><small>(${gradeText})</small>${resistanceNote}
+                </td>`;
+                
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table></div>';
+            container.innerHTML = html;
+        }
+
+        // Exportar/Importar datos y nuevas funciones
+        function exportData() {
+            const data = {
+                students: students,
+                tests: tests,
+                exportDate: new Date().toISOString(),
+                version: "2.0"
+            };
+            
+            const jsonString = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pruebas_fisicas_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            
+            URL.revokeObjectURL(url);
+            playSound('success');
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const data = JSON.parse(e.target.result);
+                            students = data.students || [];
+                            tests = data.tests || {};
+                            updateAll();
+                            alert('Datos importados correctamente');
+                            playSound('success');
+                        } catch (error) {
+                            alert('Error al importar el archivo');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        // Modo exterior - mejora contraste y brillo
+        function toggleOutdoorMode() {
+            document.body.classList.toggle('outdoor-optimized');
+            const isOutdoor = document.body.classList.contains('outdoor-optimized');
+            
+            // Cambiar texto del botón
+            let btn = null;
+            if (typeof event !== 'undefined' && event && event.target) {
+                btn = event.target;
+            } else {
+                // Fallback: buscar el botón por el onclick
+                btn = document.querySelector('[onclick="toggleOutdoorMode()"]');
+            }
+            
+            if (btn) {
+                btn.textContent = isOutdoor ? '🏠 Modo Interior' : '☀️ Modo Exterior';
+            }
+            
+            // Guardar preferencia
+            safeSetItem('outdoorMode', isOutdoor);
+        }
+
+        // Backup automático
+        function autoBackup() {
+            const data = {
+                students: students,
+                tests: tests,
+                timestamp: new Date().toISOString()
+            };
+            
+            const success = safeSetItem('educacion_fisica_backup', JSON.stringify(data));
+            
+            if (success) {
+                alert('✅ Backup guardado automáticamente');
+                playSound('success');
+            } else {
+                alert('ℹ️ Backup no disponible en este modo.\n\n💡 Recomendación: Usa "💾 Exportar Datos" para guardar tu trabajo manualmente.');
+            }
+        }
+
+        // Cargar backup si existe
+        function loadAutoBackup() {
+            const backup = safeGetItem('educacion_fisica_backup');
+            if (backup && students.length === 0) {
+                try {
+                    const data = JSON.parse(backup);
+                    if (confirm('🔄 Se encontró un backup previo. ¿Deseas restaurarlo?')) {
+                        students = data.students || [];
+                        tests = data.tests || {};
+                        updateAll();
+                        alert('✅ Backup restaurado correctamente');
+                    }
+                } catch (e) {
+                    // Silencioso - no molestar al usuario con errores técnicos
+                }
+            }
+        }
+
+        // Restaurar modo exterior si estaba activado
+        function restorePreferences() {
+            const outdoorMode = safeGetItem('outdoorMode');
+            if (outdoorMode === 'true') {
+                document.body.classList.add('outdoor-optimized');
+                const btn = document.querySelector('[onclick="toggleOutdoorMode()"]');
+                if (btn) btn.textContent = '🏠 Modo Interior';
+            }
+        }
+
+        // Funciones para importación masiva de alumnos
+        function showBulkTextImport() {
+            const modal = document.getElementById('bulkImportModal');
+            const courseDisplay = document.getElementById('selectedCourseDisplay');
+            const bulkCourse = document.getElementById('bulkCourse').value;
+            
+            courseDisplay.textContent = bulkCourse;
+            modal.style.display = 'block';
+            
+            // Limpiar textarea
+            document.getElementById('bulkStudentNames').value = '';
+            updateNameCount();
+        }
+
+        function closeBulkImport() {
+            document.getElementById('bulkImportModal').style.display = 'none';
+        }
+
+        function updateNameCount() {
+            const textarea = document.getElementById('bulkStudentNames');
+            if (textarea) {
+                const names = textarea.value.split('\n').filter(name => name.trim().length > 0);
+                const counter = document.getElementById('nameCount');
+                if (counter) {
+                    counter.textContent = names.length;
+                }
+            }
+        }
+
+        function processBulkImport() {
+            const course = document.getElementById('bulkCourse').value;
+            const namesText = document.getElementById('bulkStudentNames').value;
+            
+            if (!namesText.trim()) {
+                alert('Por favor, ingresa al menos un nombre');
+                return;
+            }
+            
+            const names = namesText.split('\n')
+                .map(name => name.trim())
+                .filter(name => name.length > 0);
+                
+            if (names.length === 0) {
+                alert('No se encontraron nombres válidos');
+                return;
+            }
+            
+            let addedCount = 0;
+            
+            names.forEach(name => {
+                // Verificar si ya existe
+                const exists = students.some(s => 
+                    s.name.toLowerCase() === name.toLowerCase() && s.course === course
+                );
+                
+                if (!exists) {
+                    const student = {
+                        id: Date.now() + Math.random(), // Evitar IDs duplicados
+                        name: name,
+                        course: course,
+                        birth: '' // Se puede completar después
+                    };
+                    
+                    students.push(student);
+                    tests[student.id] = {};
+                    addedCount++;
+                }
+            });
+            
+            updateAll();
+            
+            // Backup automático seguro
+            if (isStorageAvailable()) {
+                const data = {
+                    students: students,
+                    tests: tests,
+                    timestamp: new Date().toISOString()
+                };
+                safeSetItem('educacion_fisica_backup', JSON.stringify(data));
+            }
+            
+            closeBulkImport();
+            
+            alert(`¡Importación completada!\n${addedCount} alumnos agregados a ${course}\n${names.length - addedCount} ya existían`);
+            playSound('success');
+        }
+
+        function importCSVStudents() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.csv,.txt';
+            input.onchange = function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const text = e.target.result;
+                        processCSVImport(text);
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        function processCSVImport(csvText) {
+            const course = document.getElementById('bulkCourse').value;
+            const lines = csvText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+            
+            if (lines.length === 0) {
+                alert('El archivo está vacío o no es válido');
+                return;
+            }
+            
+            let addedCount = 0;
+            let hasHeader = false;
+            
+            // Detectar si la primera línea es un encabezado
+            const firstLine = lines[0].toLowerCase();
+            if (firstLine.includes('nombre') || firstLine.includes('apellido') || firstLine.includes('name')) {
+                hasHeader = true;
+            }
+            
+            const dataLines = hasHeader ? lines.slice(1) : lines;
+            
+            dataLines.forEach(line => {
+                // Procesar línea CSV (separada por comas, punto y coma, o tabs)
+                const parts = line.split(/[,;\t]/).map(part => part.trim().replace(/"/g, ''));
+                
+                let name = '';
+                let birth = '';
+                
+                if (parts.length >= 1) {
+                    // Si tiene múltiples campos, intentar combinar nombre y apellidos
+                    if (parts.length >= 2) {
+                        name = parts.slice(0, -1).join(' ').trim(); // Todos menos el último
+                        const lastPart = parts[parts.length - 1];
+                        // Si el último campo parece una fecha, usarlo como nacimiento
+                        if (lastPart.match(/\d{4}[-/]\d{1,2}[-/]\d{1,2}/) || lastPart.match(/\d{1,2}[-/]\d{1,2}[-/]\d{4}/)) {
+                            birth = lastPart;
+                        } else {
+                            name += ' ' + lastPart; // Si no es fecha, es parte del nombre
+                        }
+                    } else {
+                        name = parts[0];
+                    }
+                    
+                    if (name.length > 0) {
+                        // Verificar si ya existe
+                        const exists = students.some(s => 
+                            s.name.toLowerCase() === name.toLowerCase() && s.course === course
+                        );
+                        
+                        if (!exists) {
+                            const student = {
+                                id: Date.now() + Math.random(),
+                                name: name,
+                                course: course,
+                                birth: birth
+                            };
+                            
+                            students.push(student);
+                            tests[student.id] = {};
+                            addedCount++;
+                        }
+                    }
+                }
+            });
+            
+            updateAll();
+            
+            // Backup automático seguro
+            if (isStorageAvailable()) {
+                const data = {
+                    students: students,
+                    tests: tests,
+                    timestamp: new Date().toISOString()
+                };
+                safeSetItem('educacion_fisica_backup', JSON.stringify(data));
+            }
+            
+            alert(`¡CSV importado!\n${addedCount} alumnos agregados a ${course}\n${dataLines.length - addedCount} ya existían o no eran válidos`);
+            playSound('success');
+        }
+
+        // Función mejorada de agregar estudiante individual
+        function addStudent() {
+            const name = document.getElementById('studentName').value;
+            const course = document.getElementById('studentCourse').value;
+            const birth = document.getElementById('studentBirth').value;
+            
+            if (!name.trim()) {
+                alert('Por favor, ingresa el nombre del alumno');
+                return;
+            }
+            
+            // Verificar si ya existe
+            const exists = students.some(s => 
+                s.name.toLowerCase() === name.trim().toLowerCase() && s.course === course
+            );
+            
+            if (exists) {
+                alert('Este alumno ya existe en la clase seleccionada');
+                return;
+            }
+            
+            const student = {
+                id: Date.now(),
+                name: name.trim(),
+                course: course,
+                birth: birth
+            };
+            
+            students.push(student);
+            tests[student.id] = {};
+            
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentBirth').value = '';
+            
+            updateAll();
+            
+            // Backup automático al agregar (usando función segura)
+            if (isStorageAvailable()) {
+                const data = {
+                    students: students,
+                    tests: tests,
+                    timestamp: new Date().toISOString()
+                };
+                safeSetItem('educacion_fisica_backup', JSON.stringify(data));
+            }
+            
+            playSound('success');
+            alert('Alumno agregado correctamente');
+        }
+
+        // Utilidad para verificar localStorage de forma segura
+        function isStorageAvailable() {
+            try {
+                return typeof Storage !== 'undefined' && 
+                       localStorage !== null && 
+                       localStorage !== undefined;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function safeGetItem(key) {
+            if (isStorageAvailable()) {
+                try {
+                    return localStorage.getItem(key);
+                } catch (e) {
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        function safeSetItem(key, value) {
+            if (isStorageAvailable()) {
+                try {
+                    localStorage.setItem(key, value);
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        function safeRemoveItem(key) {
+            if (isStorageAvailable()) {
+                try {
+                    localStorage.removeItem(key);
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        // Sistema de calificaciones
+        function calculateGrade(completedTests) {
+            const gradeScale = {
+                6: 10, // Todas las pruebas
+                5: 9,
+                4: 7,
+                3: 5,
+                2: 4,
+                1: 3,
+                0: 1
+            };
+            
+            return gradeScale[completedTests] || 1;
+        }
+
+        // Sistema de calificación para la prueba de resistencia (Course Navette)
+        function calculateResistanceGrade(periods, course) {
+            const courseLevel = course.startsWith('2') ? '2ESO' : '4ESO';
+            
+            if (courseLevel === '2ESO') {
+                // 2° ESO - Baremo basado en 13-14 años
+                if (periods >= 10.0) return 10;
+                if (periods >= 9.5) return 9;
+                if (periods >= 8.5) return 8;
+                if (periods >= 7.5) return 7;
+                if (periods >= 6.5) return 6;
+                if (periods >= 3.0) return 5; // 3-3.5 periodos = 5 (aprobado)
+                if (periods >= 2.0) return 4;
+                if (periods >= 1.0) return 3;
+                if (periods >= 0.5) return 2;
+                return 1;
+            } else {
+                // 4° ESO - Baremo más exigente para 15-16 años
+                if (periods >= 12.0) return 10;
+                if (periods >= 11.5) return 9;
+                if (periods >= 10.5) return 8;
+                if (periods >= 9.5) return 7;
+                if (periods >= 8.5) return 6;
+                if (periods >= 4.0) return 5; // Aprobado mínimo más exigente
+                if (periods >= 3.0) return 4;
+                if (periods >= 2.0) return 3;
+                if (periods >= 1.0) return 2;
+                return 1;
+            }
+        }
+
+        function getGradeColor(grade) {
+            if (grade >= 9) return '#28a745'; // Verde para 9-10
+            if (grade >= 7) return '#20c997'; // Verde claro para 7-8
+            if (grade >= 5) return '#ffc107'; // Amarillo para 5-6
+            if (grade >= 3) return '#fd7e14'; // Naranja para 3-4
+            return '#dc3545'; // Rojo para 1-2
+        }
+
+        function getGradeText(grade) {
+            if (grade >= 9) return 'Excelente';
+            if (grade >= 7) return 'Notable';
+            if (grade >= 5) return 'Aprobado';
+            if (grade >= 3) return 'Insuficiente';
+            return 'Muy Deficiente';
+        }
+        // Funciones de previsualización
+        function updatePreview() {
+            const course = document.getElementById('previewCourse').value;
+            const statsContainer = document.getElementById('previewStats');
+            const previewContainer = document.getElementById('previewContainer');
+            
+            // Generar estadísticas
+            generatePreviewStats(course, statsContainer);
+            
+            // Generar tabla de previsualización
+            generatePreviewTable(course, previewContainer);
+        }
+
+        function generatePreviewStats(course, container) {
+            const filteredStudents = course === 'all' ? students : students.filter(s => s.course === course);
+            
+            if (filteredStudents.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">No hay datos para mostrar</div>';
+                return;
+            }
+
+            const totalStudents = filteredStudents.length;
+            const totalTests = totalStudents * Object.keys(testTypes).length;
+            let completedTests = 0;
+            let excellentCount = 0;
+            let goodCount = 0;
+            let averageCount = 0;
+            let belowCount = 0;
+            let poorCount = 0;
+            
+            // Contadores de notas
+            let gradeSum = 0;
+            let grade10Count = 0;
+            let grade9Count = 0;
+            let grade7Count = 0;
+            let grade5Count = 0;
+            let grade4Count = 0;
+            let grade3Count = 0;
+            let grade1Count = 0;
+
+            filteredStudents.forEach(student => {
+                const studentTests = tests[student.id] || {};
+                let studentCompletedTests = 0;
+                
+                Object.keys(testTypes).forEach(testKey => {
+                    const test = studentTests[testKey];
+                    if (test && test.value !== undefined) {
+                        completedTests++;
+                        studentCompletedTests++;
+                        const performance = calculatePerformanceLevel(testKey, test.value, student.course);
+                        switch (performance) {
+                            case 'excellent': excellentCount++; break;
+                            case 'good': goodCount++; break;
+                            case 'average': averageCount++; break;
+                            case 'below': belowCount++; break;
+                            case 'poor': poorCount++; break;
+                        }
+                    }
+                });
+                
+                // Calcular nota del estudiante
+                const grade = calculateGrade(studentCompletedTests);
+                gradeSum += grade;
+                
+                switch (grade) {
+                    case 10: grade10Count++; break;
+                    case 9: grade9Count++; break;
+                    case 7: grade7Count++; break;
+                    case 5: grade5Count++; break;
+                    case 4: grade4Count++; break;
+                    case 3: grade3Count++; break;
+                    case 1: grade1Count++; break;
+                }
+            });
+
+            const completionRate = totalTests > 0 ? Math.round((completedTests / totalTests) * 100) : 0;
+            const averageGrade = totalStudents > 0 ? (gradeSum / totalStudents).toFixed(1) : 0;
+
+            container.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${totalStudents}</div>
+                    <div>Alumnos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${completionRate}%</div>
+                    <div>Pruebas Completadas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: ${getGradeColor(averageGrade)}">${averageGrade}</div>
+                    <div>Nota Media</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: #28a745">${grade10Count + grade9Count}</div>
+                    <div>📚 Excelentes (9-10)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: #ffc107">${grade7Count + grade5Count}</div>
+                    <div>⚠️ Aprobados (5-7)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: #dc3545">${grade4Count + grade3Count + grade1Count}</div>
+                    <div>❌ Suspensos (1-4)</div>
+                </div>
+            `;
+        }
+
+        function generatePreviewTable(course, container) {
+            const filteredStudents = course === 'all' ? students : students.filter(s => s.course === course);
+            
+            if (filteredStudents.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">No hay alumnos para mostrar</div>';
+                return;
+            }
+
+            let html = '<table class="preview-table">';
+            
+            // Si es "todas las clases", agrupar por curso
+            if (course === 'all') {
+                const courses = ['2A', '2B', '2C', '4A', '4B', '4C'];
+                
+                courses.forEach(courseCode => {
+                    const courseStudents = students.filter(s => s.course === courseCode);
+                    if (courseStudents.length > 0) {
+                        // Encabezado del curso
+                        html += `
+                            <tr>
+                                <td colspan="${Object.keys(testTypes).length + 3}" class="course-header">
+                                    ${courseCode} (${courseStudents.length} alumnos)
+                                </td>
+                            </tr>
+                        `;
+                        
+                        // Encabezados de pruebas
+                        html += '<tr><th>Alumno</th>';
+                        Object.values(testTypes).forEach(test => {
+                            html += `<th>${test.name}<br><small>(${test.unit})</small></th>`;
+                        });
+                        html += '<th>Progreso</th><th>Nota Final</th></tr>';
+                        
+                        // Estudiantes del curso
+                        courseStudents.forEach(student => {
+                            html += generateStudentRow(student);
+                        });
+                    }
+                });
+            } else {
+                // Una sola clase
+                html += `
+                    <tr class="class-summary">
+                        <td colspan="${Object.keys(testTypes).length + 3}">
+                            📋 ${course} - ${filteredStudents.length} Alumnos
+                        </td>
+                    </tr>
+                `;
+                
+                // Encabezados
+                html += '<tr><th>Alumno</th>';
+                Object.values(testTypes).forEach(test => {
+                    html += `<th>${test.name}<br><small>(${test.unit})</small></th>`;
+                });
+                html += '<th>Progreso</th><th>Nota Final</th></tr>';
+                
+                // Estudiantes
+                filteredStudents.forEach(student => {
+                    html += generateStudentRow(student);
+                });
+            }
+            
+            html += '</table>';
+            container.innerHTML = html;
+        }
+
+        function generateStudentRow(student) {
+            const studentTests = tests[student.id] || {};
+            let completedCount = 0;
+            
+            let html = `<tr><td class="student-name">${student.name}</td>`;
+            
+            Object.keys(testTypes).forEach(testKey => {
+                const test = studentTests[testKey];
+                const testInfo = testTypes[testKey];
+                
+                if (test && test.value !== undefined) {
+                    completedCount++;
+                    const performance = calculatePerformanceLevel(testKey, test.value, student.course);
+                    const cellClass = `cell-${performance}`;
+                    
+                    // Para resistencia, mostrar también la nota específica
+                    if (testKey === 'resistencia') {
+                        const resistanceGrade = calculateResistanceGrade(test.value, student.course);
+                        const gradeColor = getGradeColor(resistanceGrade);
+                        html += `<td class="${cellClass}">
+                            ${test.value} ${testInfo.unit}<br>
+                            <small style="color: ${gradeColor}; font-weight: bold;">Nota: ${resistanceGrade}</small>
+                        </td>`;
+                    } else {
+                        html += `<td class="${cellClass}">${test.value} ${testInfo.unit}</td>`;
+                    }
+                } else {
+                    html += `<td class="cell-missing">-</td>`;
+                }
+            });
+            
+            // Columna de progreso
+            const totalTests = Object.keys(testTypes).length;
+            const progressPercentage = Math.round((completedCount / totalTests) * 100);
+            const progressClass = progressPercentage >= 80 ? 'progress-excellent' : 
+                                 progressPercentage >= 60 ? 'progress-good' : 
+                                 progressPercentage >= 40 ? 'progress-average' : 'progress-poor';
+            
+            html += `<td>${completedCount}/${totalTests} <span class="progress-indicator ${progressClass}"></span></td>`;
+            
+            // Columna de nota final
+            const grade = calculateGrade(completedCount);
+            const gradeColor = getGradeColor(grade);
+            const gradeText = getGradeText(grade);
+            
+            // Si tiene resistencia, mostrar también esa nota
+            let resistanceNote = '';
+            if (studentTests.resistencia && studentTests.resistencia.value !== undefined) {
+                const resistanceGrade = calculateResistanceGrade(studentTests.resistencia.value, student.course);
+                const resColor = getGradeColor(resistanceGrade);
+                resistanceNote = `<br><small style="color: ${resColor};">Resistencia: ${resistanceGrade}</small>`;
+            }
+            
+            html += `<td style="font-weight: bold; color: ${gradeColor}; text-align: center;">
+                ${grade} <br><small style="font-size: 0.8rem;">(${gradeText})</small>${resistanceNote}
+            </td>`;
+            
+            html += '</tr>';
+            
+            return html;
+        }
+
+        function calculatePerformanceLevel(testType, value, studentCourse) {
+            // Estándares básicos de rendimiento por curso y test
+            const standards = {
+                '2A': { // 2° ESO A (13-14 años)
+                    'abdominales': { excellent: 35, good: 28, average: 22, below: 15 },
+                    'velocidad': { excellent: 7.5, good: 8.2, average: 9.0, below: 10.0 }, // menor es mejor
+                    'salto': { excellent: 2.0, good: 1.8, average: 1.6, below: 1.4 },
+                    'balon': { excellent: 6.0, good: 5.0, average: 4.0, below: 3.0 },
+                    'flexibilidad': { excellent: 15, good: 10, average: 5, below: 0 },
+                    'resistencia': { excellent: 8.0, good: 6.5, average: 5.0, below: 3.5 }
+                },
+                '2B': { // Mismo estándar para 2° ESO
+                    'abdominales': { excellent: 35, good: 28, average: 22, below: 15 },
+                    'velocidad': { excellent: 7.5, good: 8.2, average: 9.0, below: 10.0 },
+                    'salto': { excellent: 2.0, good: 1.8, average: 1.6, below: 1.4 },
+                    'balon': { excellent: 6.0, good: 5.0, average: 4.0, below: 3.0 },
+                    'flexibilidad': { excellent: 15, good: 10, average: 5, below: 0 },
+                    'resistencia': { excellent: 8.0, good: 6.5, average: 5.0, below: 3.5 }
+                },
+                '2C': { // Mismo estándar para 2° ESO
+                    'abdominales': { excellent: 35, good: 28, average: 22, below: 15 },
+                    'velocidad': { excellent: 7.5, good: 8.2, average: 9.0, below: 10.0 },
+                    'salto': { excellent: 2.0, good: 1.8, average: 1.6, below: 1.4 },
+                    'balon': { excellent: 6.0, good: 5.0, average: 4.0, below: 3.0 },
+                    'flexibilidad': { excellent: 15, good: 10, average: 5, below: 0 },
+                    'resistencia': { excellent: 8.0, good: 6.5, average: 5.0, below: 3.5 }
+                },
+                '4A': { // 4° ESO A (15-16 años) - Estándares más altos
+                    'abdominales': { excellent: 45, good: 35, average: 28, below: 20 },
+                    'velocidad': { excellent: 7.0, good: 7.8, average: 8.5, below: 9.5 },
+                    'salto': { excellent: 2.3, good: 2.0, average: 1.8, below: 1.5 },
+                    'balon': { excellent: 8.0, good: 6.5, average: 5.0, below: 4.0 },
+                    'flexibilidad': { excellent: 18, good: 12, average: 7, below: 2 },
+                    'resistencia': { excellent: 10.0, good: 8.0, average: 6.5, below: 5.0 }
+                },
+                '4B': { // Mismo estándar para 4° ESO
+                    'abdominales': { excellent: 45, good: 35, average: 28, below: 20 },
+                    'velocidad': { excellent: 7.0, good: 7.8, average: 8.5, below: 9.5 },
+                    'salto': { excellent: 2.3, good: 2.0, average: 1.8, below: 1.5 },
+                    'balon': { excellent: 8.0, good: 6.5, average: 5.0, below: 4.0 },
+                    'flexibilidad': { excellent: 18, good: 12, average: 7, below: 2 },
+                    'resistencia': { excellent: 10.0, good: 8.0, average: 6.5, below: 5.0 }
+                },
+                '4C': { // Mismo estándar para 4° ESO
+                    'abdominales': { excellent: 45, good: 35, average: 28, below: 20 },
+                    'velocidad': { excellent: 7.0, good: 7.8, average: 8.5, below: 9.5 },
+                    'salto': { excellent: 2.3, good: 2.0, average: 1.8, below: 1.5 },
+                    'balon': { excellent: 8.0, good: 6.5, average: 5.0, below: 4.0 },
+                    'flexibilidad': { excellent: 18, good: 12, average: 7, below: 2 },
+                    'resistencia': { excellent: 10.0, good: 8.0, average: 6.5, below: 5.0 }
+                }
+            };
+
+            const courseStandards = standards[studentCourse];
+            if (!courseStandards || !courseStandards[testType]) {
+                return 'average'; // Valor por defecto
+            }
+
+            const testStandards = courseStandards[testType];
+            
+            // Para velocidad (menor es mejor)
+            if (testType === 'velocidad') {
+                if (value <= testStandards.excellent) return 'excellent';
+                if (value <= testStandards.good) return 'good';
+                if (value <= testStandards.average) return 'average';
+                if (value <= testStandards.below) return 'below';
+                return 'poor';
+            }
+            
+            // Para otras pruebas (mayor es mejor)
+            if (value >= testStandards.excellent) return 'excellent';
+            if (value >= testStandards.good) return 'good';
+            if (value >= testStandards.average) return 'average';
+            if (value >= testStandards.below) return 'below';
+            return 'poor';
+        }
+
+        function printPreview() {
+            window.print();
+        }
+
+        function exportPreviewCSV() {
+            const course = document.getElementById('previewCourse').value;
+            const filteredStudents = course === 'all' ? students : students.filter(s => s.course === course);
+            
+            if (filteredStudents.length === 0) {
+                alert('No hay datos para exportar');
+                return;
+            }
+
+            let csvContent = 'Curso,Alumno';
+            Object.values(testTypes).forEach(test => {
+                csvContent += `,${test.name} (${test.unit})`;
+            });
+            csvContent += ',Progreso (%),Nota Final,Calificación,Nota Resistencia\n';
+
+            filteredStudents.forEach(student => {
+                const studentTests = tests[student.id] || {};
+                let completedCount = 0;
+                
+                csvContent += `${student.course},${student.name}`;
+                
+                Object.keys(testTypes).forEach(testKey => {
+                    const test = studentTests[testKey];
+                    if (test && test.value !== undefined) {
+                        csvContent += `,${test.value}`;
+                        completedCount++;
+                    } else {
+                        csvContent += ',-';
+                    }
+                });
+                
+                const progressPercentage = Math.round((completedCount / Object.keys(testTypes).length) * 100);
+                const grade = calculateGrade(completedCount);
+                const gradeText = getGradeText(grade);
+                
+                // Nota de resistencia específica
+                let resistanceGrade = '-';
+                if (studentTests.resistencia && studentTests.resistencia.value !== undefined) {
+                    resistanceGrade = calculateResistanceGrade(studentTests.resistencia.value, student.course);
+                }
+                
+                csvContent += `,${progressPercentage}%,${grade},${gradeText},${resistanceGrade}\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `previsualizar_${course}_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            
+            URL.revokeObjectURL(url);
+            playSound('success');
+        }
+
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            init();
+            
+            // Configurar event listeners para importación masiva
+            const textarea = document.getElementById('bulkStudentNames');
+            if (textarea) {
+                textarea.addEventListener('input', updateNameCount);
+            }
+        });
+        
+        // Por si acaso, también inicializar al cargar la ventana
+        window.addEventListener('load', function() {
+            if (students.length === 0) {
+                init();
+            }
+            
+            // Configurar event listeners adicionales
+            const textarea = document.getElementById('bulkStudentNames');
+            if (textarea && !textarea.hasAttribute('data-listener')) {
+                textarea.addEventListener('input', updateNameCount);
+                textarea.setAttribute('data-listener', 'true');
+            }
+        });
+    </script>
+</body>
+</html>
